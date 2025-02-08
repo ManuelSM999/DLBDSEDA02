@@ -8,7 +8,7 @@ from nltk.corpus import stopwords
 
 
 def print_topics(model, number_of_words_per_topic):
-    # Interate over topics = components
+    # Iterate over topics = components
     for i, component in enumerate(model.components_):
         # combine words with their value within the component
         vocab_comp = zip(tfidf_vectorizer.get_feature_names_out(), component)
