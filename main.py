@@ -31,37 +31,33 @@ with open('Musical_instruments_reviews.csv', mode='r', newline='', encoding='utf
     for review in content:
         dirty_review_text = review['reviewText']
         clean_review_text = re.sub(r'[^a-zA-Z\s]', '',
-                                   dirty_review_text)  # only letters and spaces to tokanize the words
+                                   dirty_review_text.lower())  # only letters and spaces to tokanize the words
         reviews.append(clean_review_text)
 
 # vectorizers assign a value to all words in all reviews
-# init vectorizers with Parameters
+
+# init vectorizers with Parameters (stopwords)
 tfidf_vectorizer = TfidfVectorizer(stop_words=stop_words)
 count_vectorizer = CountVectorizer(stop_words=stop_words)
-
 # add data to vectorizers
 tfidf_data = tfidf_vectorizer.fit_transform(reviews)
 count_data = count_vectorizer.fit_transform(reviews)
-
-# # to pretty print the data with Pandas
-# tfidf_data_frame = pd.DataFrame(tfidf_data.toarray(), columns=tfidf_vectorizer.get_feature_names_out())
-# count_data_frame = pd.DataFrame(count_data.toarray(), columns=count_vectorizer.get_feature_names_out())
-
 
 number_of_topics = 5
 number_of_words_per_topic = 10
 
 # LSA Model
 lsa_model = TruncatedSVD(n_components=number_of_topics, algorithm="randomized",
-                         n_iter=10)  # Aufbau einer SVD matrix mithilfe von TruncatedSVD
-lsa_model.fit(tfidf_data, number_of_words_per_topic)  # Use word values from tfidf for lsa model
+                         n_iter=10)  # building a SVD matrix using TruncatedSVD
+lsa_model.fit_transform(tfidf_data)  # Use word values from tfidf for lsa model
 
 print('-----------------LSA-----------------------')
 print_topics(lsa_model, number_of_words_per_topic)
 
 print()
 # LDA
-lda_model = LatentDirichletAllocation(n_components=number_of_topics, learning_method='online', max_iter=1)
+lda_model = LatentDirichletAllocation(n_components=number_of_topics, learning_method='online', max_iter=1,
+                                      random_state=42)
 lda_model.fit(tfidf_data)
 
 print('-----------------LDA-----------------------')
