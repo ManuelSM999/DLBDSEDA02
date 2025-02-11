@@ -6,10 +6,9 @@ from tabulate import tabulate
 from sklearn.decomposition import TruncatedSVD, LatentDirichletAllocation
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
-from nltk.corpus import stopwords
 from nltk.corpus import words
 
-# download wordl ist from nltk
+# download wordlist from nltk
 nltk.download('words')
 
 
@@ -43,11 +42,10 @@ with open('Musical_instruments_reviews.csv', mode='r', newline='', encoding='utf
         valid_words = [word for word in tokenize_words if word in word_list]
         reviews.append(" ".join(valid_words))
 
-stop_words = stopwords.words('english')
 # vectorizers assign a value to all words in all reviews
 # init vectorizers with Parameters (stopwords)
-tfidf_vectorizer = TfidfVectorizer(stop_words=stop_words)
-count_vectorizer = CountVectorizer(stop_words=stop_words)
+tfidf_vectorizer = TfidfVectorizer(stop_words='english')
+count_vectorizer = CountVectorizer(stop_words='english')
 # add data to vectorizers
 tfidf_data = tfidf_vectorizer.fit_transform(reviews)
 count_data = count_vectorizer.fit_transform(reviews)
@@ -72,7 +70,7 @@ number_of_words_per_topic = 10
 # LSA Model
 lsa_model = TruncatedSVD(n_components=number_of_topics, algorithm="randomized",
                          n_iter=10)  # building an SVD matrix using TruncatedSVD
-lsa_model.fit_transform(tfidf_data)  # Use word values from tfidf for lsa model
+lsa_model.fit_transform(tfidf_data)  # Use word values from TF-IDF for lsa model
 
 print('-----------------LSA-----------------------')
 print_topics(lsa_model, number_of_words_per_topic)
@@ -81,7 +79,7 @@ print()
 # LDA
 lda_model = LatentDirichletAllocation(n_components=number_of_topics, learning_method='online', max_iter=1,
                                       random_state=42)
-lda_model.fit(tfidf_data)
+lda_model.fit_transform(tfidf_data)  # Use word values from TF-IDF for lsa model
 
 print('-----------------LDA-----------------------')
 print_topics(lda_model, number_of_words_per_topic)
